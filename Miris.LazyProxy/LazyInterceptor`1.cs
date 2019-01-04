@@ -15,6 +15,11 @@ namespace Miris.LazyProxy
 
         public void Intercept(IInvocation invocation)
         {
+            if (!_lazy.IsValueCreated
+                && invocation.Method.DeclaringType == typeof(IDisposable) &&
+                invocation.Method.Name.Equals("Dispose"))
+                return;
+
             var target = _lazy.Value.Value;
 
             invocation.ReturnValue = invocation.GetConcreteMethod().Invoke(
