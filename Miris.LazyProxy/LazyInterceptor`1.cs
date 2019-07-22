@@ -5,6 +5,7 @@ namespace Miris.LazyProxy
 {
     public class LazyInterceptor<T>
         : IInterceptor
+        where T : class
     {
         private readonly Lazy<Lazy<T>> _lazy;
 
@@ -20,7 +21,7 @@ namespace Miris.LazyProxy
                 invocation.Method.Name.Equals("Dispose"))
                 return;
 
-            var target = _lazy.Value.Value;
+            var target = _lazy.Value.Value ?? throw new NullReferenceException();
 
             invocation.ReturnValue = invocation.GetConcreteMethod().Invoke(
                 target,
