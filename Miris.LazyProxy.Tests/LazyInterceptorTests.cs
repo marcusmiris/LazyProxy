@@ -10,7 +10,7 @@ namespace Miris.LazyProxy.Tests
         [TestMethod]
         public void DisposeNonLoadedLazy()
         {
-            var svc = LazyProxyBuilder.CreateProxyForLazy<IService>(() => throw new AbandonedMutexException());
+            IService svc = LazyProxyGenerator.CreateLazyProxyFor<IService>(() => throw new AbandonedMutexException());
             try
             {
                 svc.Dispose();

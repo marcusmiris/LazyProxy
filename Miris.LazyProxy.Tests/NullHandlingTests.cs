@@ -11,16 +11,7 @@ namespace Miris.LazyProxy.Tests
         [ExpectedException(typeof(NullReferenceException))]
         public void ThrowCorrectNullReferenceException()
         {
-            var svc = LazyProxyBuilder.CreateProxyForLazy<IService>(() => null);
-
-            svc.Do();
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(NullReferenceException))]
-        public void ThrowCorrectLazyNullReferenceException()
-        {
-            var svc = LazyProxyBuilder.CreateProxyForLazy<IService>(() => new Lazy<IService>(() => null));
+            var svc = LazyProxyGenerator.CreateLazyProxyFor<IService>(() => null);
 
             svc.Do();
         }
