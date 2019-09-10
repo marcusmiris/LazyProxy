@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Marcus Miris</Authors>
+    <Description>Decorates an interface service for only instantiate it when some method is invoked. Useful to prevent memory allocation of non-used injected dependencies.</Description>
+    <Copyright>Copyright © Marcus Miris 2019</Copyright>
+    <Company></Company>
+    <PackageProjectUrl>https://github.com/marcusmiris/LazyProxy/</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/marcusmiris/LazyProxy/master/Miris.LazyProxy/icon.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/marcusmiris/LazyProxy/</RepositoryUrl>
+    <PackageTags>LazyProxy Lazy Dependency Injection DI</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

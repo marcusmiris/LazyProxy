@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <iconUrl>https://raw.githubusercontent.com/marcusmiris/LazyProxy/master/Miris.LazyProxy/icon.png</iconUrl>
+    <description>$description$</description>
+    <tags>LazyProxy Lazy Dependency Injection DI</tags>
+    <projectUrl>https://github.com/marcusmiris/LazyProxy</projectUrl>
+  </metadata>
+</package>
