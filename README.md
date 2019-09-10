@@ -1,3 +1,3 @@
 # LazyProxy
 
-Help to use Lazy<T> as T.
+Decorates an interface service for only instantiate it when some method is invoked. Useful to prevent memory allocation of non-used injected dependencies.
