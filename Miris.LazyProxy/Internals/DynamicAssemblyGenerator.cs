@@ -107,11 +107,11 @@ namespace Miris.LazyProxy.Internals
             return registry;
         }
 
-
         private static TypeInfo CreateProxyTypeFor(Type serviceType)
         {
             var serviceDelegateType = typeof(Func<>).MakeGenericType(serviceType);
             //
+
             var module = GetDynamicModuleBuilder();
 
             var typeBuilder = module.DefineType(
@@ -205,6 +205,24 @@ namespace Miris.LazyProxy.Internals
                             target.ReturnType,
                             target.GetParameters().Select(p => p.ParameterType).ToArray());
                         {
+                            #region ' define argumentos genéricos... '
+                            {
+                                var targetGenericArguments = target.GetGenericArguments();
+                                if (targetGenericArguments.Length > 0)
+                                {
+                                    var genericParameterNames = targetGenericArguments.Select(_ => _.Name).ToArray();
+                                    var genericParameterBuilders = methodBuilder.DefineGenericParameters(genericParameterNames);
+
+                                    for(var i = 0; i < targetGenericArguments.Length; i++)
+                                    {
+                                        var interfaceConstraints = targetGenericArguments[i].GetGenericParameterConstraints();
+                                        genericParameterBuilders[i].SetInterfaceConstraints(interfaceConstraints);
+                                    }
+                                }
+                            }
+                            #endregion
+
+
                             var ilg = methodBuilder.GetILGenerator();
 
                             #region ' gera instrução " [return] getService().target() " '

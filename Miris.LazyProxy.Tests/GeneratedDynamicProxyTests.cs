@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace Miris.LazyProxy.Tests.v2
+namespace Miris.LazyProxy.Tests
 {
     [TestClass]
     public class v2Testes
@@ -43,7 +43,7 @@ namespace Miris.LazyProxy.Tests.v2
                 Assert.AreEqual(3, three.GetValue());
 
                 // reference parameter
-                IService metade = null;  new Service(0);
+                IService metade = null; new Service(0);
                 proxy.Half(ref metade);
                 Assert.AreEqual(12, metade.GetValue());
 
@@ -52,9 +52,9 @@ namespace Miris.LazyProxy.Tests.v2
                 IService four = zero, five = zero, siz = zero;
                 boolResult = proxy.GetQuatroCincoSeis(ref four, ref five, ref siz);
                 Assert.IsTrue(boolResult);
-                Assert.IsFalse(Object.ReferenceEquals(four, zero)); Assert.AreEqual(4, four.GetValue());
-                Assert.IsFalse(Object.ReferenceEquals(five, zero)); Assert.AreEqual(5, five.GetValue());
-                Assert.IsFalse(Object.ReferenceEquals(siz, zero)); Assert.AreEqual(6, siz.GetValue());
+                Assert.IsFalse(ReferenceEquals(four, zero)); Assert.AreEqual(4, four.GetValue());
+                Assert.IsFalse(ReferenceEquals(five, zero)); Assert.AreEqual(5, five.GetValue());
+                Assert.IsFalse(ReferenceEquals(siz, zero)); Assert.AreEqual(6, siz.GetValue());
 
                 // params
                 result = proxy.IncrementParams(1, 2, 3);
@@ -75,8 +75,34 @@ namespace Miris.LazyProxy.Tests.v2
 
 
         }
+
+        [TestMethod]
+        public void GenericInterfaceImplementation()
+        {
+            var proxy = LazyProxyGenerator.CreateLazyProxyFor<IGenericInterface<int>>(() => new GenericInterface<int>(() => 10));
+
+            var atual = proxy.Cache;
+            Assert.AreEqual(default, atual);
+
+            var depois = proxy.GetObject();
+            Assert.AreEqual(10, depois);
+        }
+
+        [TestMethod]
+        public void GeneratedDynamicProxyInheritanceFromGenericTest()
+        {
+            var proxy = LazyProxyGenerator.CreateLazyProxyFor<IGenericInterface<int>>(() => new GenericInterface<int>(() => 10));
+
+            var atual = proxy.Cache;
+            Assert.AreEqual(default, atual);
+
+            var depois = proxy.GetObject();
+            Assert.AreEqual(10, depois);
+        }
     }
 
+
+    #region ' IService '
 
     public interface IService
     {
@@ -169,9 +195,54 @@ namespace Miris.LazyProxy.Tests.v2
         public void SetValue(int newValue) => Valor = newValue;
     }
 
-    
+    #endregion
 
-    
-    
+    #region ' IGenericInterface '
+
+    public interface IGenericInterface<T>
+    {
+        T Cache { get; }
+
+        T GetObject();
+    }
+
+    public class GenericInterface<T>
+        : IGenericInterface<T>
+    {
+        private readonly Func<T> factory;
+
+        public GenericInterface(Func<T> factory)
+        {
+            this.factory = factory;
+        }
+
+        #region ' IGenericInterface<T> '
+
+        public T Cache { get; private set; }
+
+        public T GetObject()
+        {
+            if (Cache.Equals(default(T)))
+            {
+                Cache = factory();
+            }
+            return this.Cache;
+        }
+
+        #endregion
+    }
+
+    #endregion
+
+    public interface IIntService
+        : IGenericInterface<int>
+    {
+
+    }
+
+
+
+
+
 
 }
