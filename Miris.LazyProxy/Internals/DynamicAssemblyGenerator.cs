@@ -213,10 +213,17 @@ namespace Miris.LazyProxy.Internals
                                     var genericParameterNames = targetGenericArguments.Select(_ => _.Name).ToArray();
                                     var genericParameterBuilders = methodBuilder.DefineGenericParameters(genericParameterNames);
 
-                                    for(var i = 0; i < targetGenericArguments.Length; i++)
+                                    for (var i = 0; i < targetGenericArguments.Length; i++)
                                     {
-                                        var interfaceConstraints = targetGenericArguments[i].GetGenericParameterConstraints();
-                                        genericParameterBuilders[i].SetInterfaceConstraints(interfaceConstraints);
+                                        var targetBuilder = targetGenericArguments[i];
+                                        //var interfaceConstraints = targetBuilder.GetGenericParameterConstraints();
+
+                                        //if (interfaceConstraints.Length > 0)
+                                        //{
+                                        //    genericParameterBuilders[i].SetBaseTypeConstraint(interfaceConstraints[0]);
+                                        //    genericParameterBuilders[i].SetInterfaceConstraints(interfaceConstraints);
+                                        //}
+                                        genericParameterBuilders[i].SetGenericParameterAttributes(targetBuilder.GetTypeInfo().GenericParameterAttributes);
                                     }
                                 }
                             }
