@@ -231,26 +231,42 @@ namespace Miris.LazyProxy.Internals
 
 
                             var ilg = methodBuilder.GetILGenerator();
+                            var returnLabel = ilg.DefineLabel();
+
 
                             #region ' gera instrução " [return] getService().target() " '
                             ilg.Emit(OpCodes.Nop);
+                            ilg.Emit(OpCodes.Ldarg_0);
 
                             // IDisposable.Dispose() isn't proxied...
                             if (target.DeclaringType != typeof(IDisposable) && !target.Name.Equals("Dispose"))
                             {
-                                ilg.Emit(OpCodes.Ldarg_0);
                                 ilg.EmitCall(OpCodes.Call, getService, null);
+                            } else
+                            {
+                                ilg.Emit(OpCodes.Ldfld, _serviceFB);        // carrega field "_service"
+                                //ilg.Emit(OpCodes.Ldnull);                   // carrega null
+                                //ilg.Emit(OpCodes.Ceq);
+                                //ilg.Emit(OpCodes.Stloc_0);
+                                //ilg.Emit(OpCodes.Ldloc_0);
+                                ilg.Emit(OpCodes.Brfalse_S, returnLabel);   // se possui valor, pula para o label "returnLabel".
 
-                                // coloca cada um dos argumentos no evaluation stack.
-                                for (var i = 1; i <= target.GetParameters().Length; i++)
-                                {
-                                    ilg.Emit(OpCodes.Ldarg, i);
-                                }
+                                ilg.Emit(OpCodes.Ldarg_0);
+                                ilg.Emit(OpCodes.Ldfld, _serviceFB);        // carrega field "_service"
 
-                                ilg.EmitCall(OpCodes.Callvirt, target, null);
-
+                                //ilg.Emit(OpCodes.Pop);
                             }
 
+                            // coloca cada um dos argumentos no evaluation stack.
+                            for (var i = 1; i <= target.GetParameters().Length; i++)
+                            {
+                                ilg.Emit(OpCodes.Ldarg, i);
+                            }
+                            ilg.EmitCall(OpCodes.Callvirt, target, null);
+                            ilg.Emit(OpCodes.Nop);
+
+                            ilg.MarkLabel(returnLabel);
+                            ilg.Emit(OpCodes.Nop);
                             ilg.Emit(OpCodes.Ret);
                             #endregion
                         }
